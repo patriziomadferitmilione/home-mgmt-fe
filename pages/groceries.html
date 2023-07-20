@@ -179,6 +179,30 @@
       // Replace '//localhost:3000/listaSpesa/getAll' with your API endpoint
       const url = 'https://home-mgmt-be.onrender.com/listaSpesa/getAll'
 
+      // Function to get the data using GET request
+      async function getDataAndPopulateTables() {
+        try {
+          const response = await axios.get(url)
+          const data = response.data
+
+          // Clear existing rows in all tables
+          Object.values(tablesByNegozio).forEach((tableBody) => {
+            tableBody.innerHTML = ''
+          })
+
+          // Add rows to the corresponding table based on 'negozio'
+          data.forEach((item) => {
+            const newRow = createTableRow(item)
+            const tableBody = tablesByNegozio[item.negozio.replace(/ /g, '_')]
+            if (tableBody) {
+              tableBody.appendChild(newRow)
+            }
+          })
+        } catch (error) {
+          console.error('Error:', error)
+        }
+      }
+
       // Function to create a table row with data
       function createTableRow(data) {
         const row = document.createElement('tr')
@@ -191,10 +215,12 @@
 
         deleteButton.addEventListener('click', () => {
           // Make a DELETE request when the delete button is clicked
-          const deleteUrl = `https://home-mgmt-be.onrender.com/${data._id}`
+          const deleteUrl = `https://home-mgmt-be.onrender.com/listaSpesa/deleteListaSpesa/${data._id}`
+          console.log('Delete URL:', deleteUrl) // Log the delete URL to check if it's correct
+
           axios
             .delete(deleteUrl)
-            .then((response) => {
+            .then(() => {
               // If the deletion is successful, remove the row from the table
               row.remove()
             })
@@ -211,7 +237,7 @@
       }
 
       // Function to handle the POST request
-      function handlePostRequest() {
+      async function handlePostRequest() {
         const selectedNegozio = document.getElementById('select-negozio').value
         const nome = document.getElementById('input-nome').value
 
@@ -221,43 +247,20 @@
           negozio: selectedNegozio,
         }
 
-        // Make the POST request
-        axios
-          .post(
+        try {
+          // Make the POST request
+          await axios.post(
             'https://home-mgmt-be.onrender.com/listaSpesa/newListaSpesa',
             postData
           )
-          .then((response) => {
-            document.getElementById('input-nome').value = ''
 
-            // After successful POST, trigger the GET request to update the tables
-            axios
-              .get(url)
-              .then((response) => {
-                const data = response.data
+          document.getElementById('input-nome').value = ''
 
-                // Clear existing rows in all tables
-                Object.values(tablesByNegozio).forEach((tableBody) => {
-                  tableBody.innerHTML = ''
-                })
-
-                // Add rows to the corresponding table based on 'negozio'
-                data.forEach((item) => {
-                  const newRow = createTableRow(item)
-                  const tableBody =
-                    tablesByNegozio[item.negozio.replace(/ /g, '_')]
-                  if (tableBody) {
-                    tableBody.appendChild(newRow)
-                  }
-                })
-              })
-              .catch((error) => {
-                console.error('Error:', error)
-              })
-          })
-          .catch((error) => {
-            console.error('Error:', error)
-          })
+          // After successful POST, trigger the GET request to update the tables
+          await getDataAndPopulateTables()
+        } catch (error) {
+          console.error('Error:', error)
+        }
       }
 
       // Event listener for the '+' button
@@ -265,24 +268,8 @@
         .getElementById('btn-add')
         .addEventListener('click', handlePostRequest)
 
-      // Initial GET request
-      axios
-        .get(url)
-        .then((response) => {
-          const data = response.data
-
-          // Add rows to the corresponding table based on 'negozio'
-          data.forEach((item) => {
-            const newRow = createTableRow(item)
-            const tableBody = tablesByNegozio[item.negozio.replace(/ /g, '_')]
-            if (tableBody) {
-              tableBody.appendChild(newRow)
-            }
-          })
-        })
-        .catch((error) => {
-          console.error('Error:', error)
-        })
+      // Initial GET request and populate tables
+      getDataAndPopulateTables()
     </script>
     <script src="../js/main.js"></script>
   </body>
