@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <title>Spese</title>
+  </head>
+  <body>
+    <main>
+      <a href="index.html" class="home_btn">HOME</a>
+      <h1>Spese</h1>
+      <h3>-solo questo dispositivo-</h3>
+      <button id="openPopupBtn">NUOVA</button>
+      <div id="overlay" style="display: none"></div>
+      <div id="popupContainer" style="display: none">
+        <form id="popupContent">
+          <input
+            type="text"
+            id="descrizione"
+            placeholder="Descrizione"
+            required
+          />
+          <select id="pagante" required>
+            <option value="Pat">Pat</option>
+            <option value="Fra">Fra</option>
+          </select>
+          <input
+            type="number"
+            id="giorno"
+            placeholder="Giorno"
+            min="1"
+            max="31"
+            required
+          />
+          <input
+            type="number"
+            id="mese"
+            placeholder="Mese"
+            min="1"
+            max="12"
+            required
+          />
+          <input
+            type="text"
+            id="spesa"
+            placeholder="Spesa (e.g., 10.99)"
+            required
+          />
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+      <div id="tableContainer">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Pagante</th>
+              <th>Descrizione</th>
+              <th>Spesa</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Table rows will be dynamically added here -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <title>Lista Spesa</title>
+  </head>
+  <body>
+    <main>
+      <a href="index.html" class="home_btn">HOME</a>
+
+      <div class="nuovaSpesa">
+        <!-- Select 'Negozio' -->
+        <select id="select-negozio">
+          <option value="Coop">Coop</option>
+          <option value="Bramante">Bramante</option>
+          <option value="Despar">Despar</option>
+          <option value="Morisciano">Morisciano</option>
+          <option value="Panetteria Pace">Panetteria Pace</option>
+          <option value="Ortofrutta via Coazze">Ortofrutta via Coazze</option>
+          <option value="Lucia Mercato">Lucia Mercato</option>
+          <option value="Cinesi">Cinesi</option>
+        </select>
+
+        <!-- Text input 'Nome' -->
+        <input type="text" id="input-nome" placeholder="Nome" />
+
+        <!-- Button to trigger POST request -->
+        <button id="btn-add">+</button>
+      </div>
+
+      <h1>Lista Spesa</h1>
+      <h3>-online-</h3>
+
+      <div class="negozi">
+        <div class="negozio">
+          <h2>Coop</h2>
+          <table id="table_coop">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="negozio">
+          <h2>Bramante</h2>
+          <table id="table_bramante">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="negozio">
+          <h2>Despar</h2>
+          <table id="table_despar">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="negozio">
+          <h2>Morisciano</h2>
+          <table id="table_morisciano">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="negozio">
+          <h2>Panetteria Pace</h2>
+          <table id="table_panetteria">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="negozio">
+          <h2>Ortofrutta via Coazze</h2>
+          <table id="table_ortofrutta">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="negozio">
+          <h2>Lucia Mercato</h2>
+          <table id="table_lucia">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="negozio">
+          <h2>Cinesi</h2>
+          <table id="table_cinesi">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+      // Object to store tables for each 'negozio' (updated with underscores)
+      const tablesByNegozio = {
+        Coop: document.querySelector('#table_coop tbody'),
+        Bramante: document.querySelector('#table_bramante tbody'),
+        Despar: document.querySelector('#table_despar tbody'),
+        Morisciano: document.querySelector('#table_morisciano tbody'),
+        Panetteria_Pace: document.querySelector('#table_panetteria tbody'),
+        Ortofrutta_via_Coazze: document.querySelector(
+          '#table_ortofrutta tbody'
+        ),
+        Lucia_Mercato: document.querySelector('#table_lucia tbody'),
+        Cinesi: document.querySelector('#table_cinesi tbody'),
+      }
+
+      // Replace '//localhost:3000/listaSpesa/getAll' with your API endpoint
+      const url = 'https://home-mgmt-be.onrender.com/listaSpesa/getAll'
+
+      // Function to create a table row with data
+      function createTableRow(data) {
+        const row = document.createElement('tr')
+        const nameCell = document.createElement('td')
+        const deleteCell = document.createElement('td')
+        const deleteButton = document.createElement('button')
+
+        nameCell.textContent = data.nome
+        deleteButton.textContent = 'X' // Set the button text to 'X'
+
+        deleteButton.addEventListener('click', () => {
+          // Make a DELETE request when the delete button is clicked
+          const deleteUrl = `https://home-mgmt-be.onrender.com/${data._id}`
+          axios
+            .delete(deleteUrl)
+            .then((response) => {
+              // If the deletion is successful, remove the row from the table
+              row.remove()
+            })
+            .catch((error) => {
+              console.error('Error:', error)
+            })
+        })
+
+        deleteCell.appendChild(deleteButton)
+        row.appendChild(nameCell)
+        row.appendChild(deleteCell)
+
+        return row
+      }
+
+      // Function to handle the POST request
+      function handlePostRequest() {
+        const selectedNegozio = document.getElementById('select-negozio').value
+        const nome = document.getElementById('input-nome').value
+
+        // Prepare the data to be sent in the POST request
+        const postData = {
+          nome: nome,
+          negozio: selectedNegozio,
+        }
+
+        // Make the POST request
+        axios
+          .post(
+            'https://home-mgmt-be.onrender.com/listaSpesa/newListaSpesa',
+            postData
+          )
+          .then((response) => {
+            document.getElementById('input-nome').value = ''
+
+            // After successful POST, trigger the GET request to update the tables
+            axios
+              .get(url)
+              .then((response) => {
+                const data = response.data
+
+                // Clear existing rows in all tables
+                Object.values(tablesByNegozio).forEach((tableBody) => {
+                  tableBody.innerHTML = ''
+                })
+
+                // Add rows to the corresponding table based on 'negozio'
+                data.forEach((item) => {
+                  const newRow = createTableRow(item)
+                  const tableBody =
+                    tablesByNegozio[item.negozio.replace(/ /g, '_')]
+                  if (tableBody) {
+                    tableBody.appendChild(newRow)
+                  }
+                })
+              })
+              .catch((error) => {
+                console.error('Error:', error)
+              })
+          })
+          .catch((error) => {
+            console.error('Error:', error)
+          })
+      }
+
+      // Event listener for the '+' button
+      document
+        .getElementById('btn-add')
+        .addEventListener('click', handlePostRequest)
+
+      // Initial GET request
+      axios
+        .get(url)
+        .then((response) => {
+          const data = response.data
+
+          // Add rows to the corresponding table based on 'negozio'
+          data.forEach((item) => {
+            const newRow = createTableRow(item)
+            const tableBody = tablesByNegozio[item.negozio.replace(/ /g, '_')]
+            if (tableBody) {
+              tableBody.appendChild(newRow)
+            }
+          })
+        })
+        .catch((error) => {
+          console.error('Error:', error)
+        })
+    </script>
+    <script src="../js/main.js"></script>
+  </body>
+</html>
